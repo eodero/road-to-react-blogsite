@@ -20,6 +20,8 @@ const list = [
 ];
 
 function App() {
+  //component setup part
+  //this the view part of react
   return (
     // the following block of code is JSX
     <div>
@@ -29,7 +31,7 @@ function App() {
       <input id="search" type="text" />
 
       <hr />
-      {/* render the list items */}
+      {/* render the list items here*/}
       <ul>
         {list.map(function (item) {
           return (
@@ -41,13 +43,12 @@ function App() {
               <span>{item.author} </span>
               <span>{item.num_comments} </span>
               <span>{item.points} </span>
-            </li>)
+            </li>);
         })}
       </ul>
 
     </div>
-  )
-
+  );
 }
 
 export default App;
