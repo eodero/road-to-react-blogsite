@@ -19,37 +19,40 @@ const list = [
   },
 ];
 
-function App() {
+const Search = () =>
+  <div>
+    <label htmlFor='search'>Search: </label>
+    <input id="search" type="text" />
+  </div>;
+
+const List = () =>
+  <ul>
+    {list.map((item) => {
+      return (
+        <li
+          key={item.objectID}>{item.title}
+          <span>
+            <a href={item.url}>{item.title} </a>
+          </span>
+          <span>{item.author} </span>
+          <span>{item.num_comments} </span>
+          <span>{item.points} </span>
+        </li >)
+    })}
+  </ul >;
+
+const App = () =>
   //component setup part
   //this the view part of react
-  return (
-    // the following block of code is JSX
-    <div>
-      <h1>My Hacker Stories </h1>
-      {/* in jsx attributes have different names from html e.g htmlFor */}
-      <label htmlFor='search'>Search: </label>
-      <input id="search" type="text" />
-
-      <hr />
-      {/* render the list items here*/}
-      <ul>
-        {list.map(function (item) {
-          return (
-            <li
-              key={item.objectID}>{item.title}
-              <span>
-                <a href={item.url}>{item.title} </a>
-              </span>
-              <span>{item.author} </span>
-              <span>{item.num_comments} </span>
-              <span>{item.points} </span>
-            </li>);
-        })}
-      </ul>
-
-    </div>
-  );
-}
+  // the following block of code is JSX
+  <div>
+    <h1>My Hacker Stories </h1>
+    {/* in jsx attributes have different names from html e.g htmlFor */}
+    <hr />
+    {/* render the list items here*/}
+    <Search />
+    <List />
+  </div>;
 
 export default App;
 
