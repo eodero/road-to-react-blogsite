@@ -1,5 +1,17 @@
 import * as React from 'react';
 
+const useSemiPersistentState = (key, initialState) => {
+  const [value, setValue] = React.useState(localStorage.getItem(key) || initialState);
+
+  React.useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [value, key]);
+
+
+  return [value, setValue]
+};
+
+
 function App() {
   const stories = [
     {
@@ -19,62 +31,87 @@ function App() {
       objectID: 1,
     },
   ];
-  return (
-    //component setup part
-    //this the view part of react
-    // the following block of code is JSX
-    <div>
-      <h1>My Hacker Stories </h1>
-      {/* in jsx attributes have different names from html e.g htmlFor */}
-      <Search />
-      <hr />
-      {/* render the list items here*/}
-      <List list={stories} />
-    </div>
 
-  );
-};
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
 
-const Search = () => {
-  //useState hook
-  //searchTerm will be the stateful value/current value
-  //setSearchTerm is function used to change the state over time
-  const [searchTerm, setSearchTerm] = React.useState('');
-
-  const handleChange = (event) => {
+  const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
+  const searchedStories = stories.filter((story) =>
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
-      <label htmlFor='search'>Search: </label>
-      <input id="search" type="text" onChange={handleChange} />
+      <h1>My Hacker Stories </h1>
 
-      <p>
-        Searching for <strong>{searchTerm}</strong>
-      </p>
+      <InputWithLabel
+        id="search"
+        // label="Search"
+        value={searchTerm}
+        isFocused
+        onInputChange={handleSearch}
+      >
+        <strong>Search:</strong>
+      </InputWithLabel>
+
+      <hr />
+
+      <List list={searchedStories} />
     </div>
-  );
+
+  )
 };
+const InputWithLabel = ({
+  id,
+  value,
+  type = 'text',
+  onInputChange,
+  isFocused,
+  children,
+}) => {
+  const inputRef = React.useRef();
+
+  React.useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
+  return (
+    <>
+      <label htmlFor={id}>{children}</label>
+      &nbsp;
+      <input
+        ref={inputRef}
+        id={id}
+        type={type}
+        value={value}
+        onChange={onInputChange}
+      />
+    </>
+  )
+}
 
 
-const List = (props) => (
+const List = ({ list }) => (
   <ul>
-    {props.list.map((item) => (
+    {list.map((item) => (
       <Item key={item.objectID} item={item} />
     ))}
   </ul>
 );
 
 
-const Item = (props) => (
+const Item = ({ item }) => (
   <li>
     <span>
-      <a href={props.item.url}>{props.item.title} </a>
+      <a href={item.url}>{item.title} </a>
     </span>
-    <span>{props.item.author} </span>
-    <span>{props.item.num_comments} </span>
-    <span>{props.item.points} </span>
+    <span>{item.author} </span>
+    <span>{item.num_comments} </span>
+    <span>{item.points} </span>
   </li >
 );
 
